@@ -1,5 +1,8 @@
 package Uniden::BC75XLT;
 
+$VERSION = "0.0.2";
+sub Version { $VERSION; }
+
 use strict;
 use Device::SerialPort;
 

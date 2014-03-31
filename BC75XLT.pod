@@ -22,8 +22,7 @@ Module implements all command described in
 UNIDEN BC75XLT Operation Specification
 (http://info.uniden.com/UnidenMan4/BC75XLT).
 
-=head1 Methods
-
+=head1 CONSTRUCTOR
 
 =head2 PACKAGE-E<gt>new(DEVICE_STR, OPTS_HASH)
 
@@ -67,21 +66,23 @@ to STDERR
 
 =item *
 
-B<fatal> - boolean, if set to true all errors are supposed as fatal and C<die>
+B<fatal> - boolean, if set to true all errors are regarded as fatal and C<die>
 will be called on them, otherwise error message invokes print to STDERR and
-C<undef> will be returned after error
+C<undef> will be returned after error.
 
 =back
 
 More accurate meaning and possible values of keys B<baudrate>, B<databits>, 
-B<parity>, B<stopbits>, B<handshake> and B<read_cost_time> you can read in 
+B<parity>, B<stopbits>, B<handshake> and B<read_cost_time> you can find in 
 L<Device::SerialPort> documentation.
 
 B<Example>:
 
  my $radio = Uniden::BC75XLT->new('/dev/ttyUSB0', echo => 1) || die "Cannot open: $!\n";
 
-=head2 OBJ->command(CMD_STR, ARGS_ARRAYREF)
+=head1 METHODS
+
+=head2 command(CMD_STR, ARGS_ARRAYREF)
 
 Method send command C<CMD_STR> to radio scanner with arguments C<ARGS_ARRAYREF>.
 Arguments array may be undefined.
@@ -89,21 +90,19 @@ Arguments array may be undefined.
 Normally you do not need to use this method 'cause other methods are frontends
 to this method and cover all described in operation manual commands.
 
-=head3 Return values
-
-Method returns hashref with following keys:
+Method returns C<HASHREF> with following keys:
 
 =over 3
 
 =item *
 
-B<status> - string, B<OK> - if command executed successfuly and B<ERROR> if 
+B<status> - string, B<OK> - if command executed successfully and B<ERROR> if 
 something was wrong
 
 =item *
 
 B<desc> - string, if B<status> has value B<ERROR> this key contains
-description of error occured
+description of error occurred
 
 =item *
 
@@ -145,9 +144,9 @@ Key lock and PGM icons.
 Some command (almost all) must be executed in PGM of scanner. If 
 you use methods of this package you do not need enter to PGM
 manually. Each method "knows" how to communicate with scanner and if it 
-needs PGM, it will enter to PRG before send command and exit after. So if you
-want to send sequence of commands you may start PRM manually and exit it after
-sequence is complite. It may save you some seconds.
+needs PGM, it will enter to PGM before send command and exit after. But if you
+want to send sequence of commands you may start PGM manually and quit it after
+sequence is complete. It may save you some seconds.
 
 =head2 quitProgramMode
 
@@ -209,22 +208,22 @@ B<Example>:
 
 =head2 getScanChannelGroup
 
-Get current status of the channel starage bank select. 
+Get current status of the channel storage bank select. 
 
-Returns ARRAYREF of 10 elements. Each element contains ON/OFF string. 
+Returns C<ARRAYREF> of 10 elements. Each element contains ON/OFF string. 
 Every array element describes group with the same index in radio. 
 But index of radio scanner groups starts with 1. So element with index 0 means
 state of group with index 1.
 
 =head2 setScanChannelGroup(GROUP_DATA)
 
-Set current status of the channel starage bank select. 
+Set current status of the channel storage bank select. 
 
-If C<GROUP_DATA> is HASHREF then keys mean to be index of radion scanner 
+If C<GROUP_DATA> is C<HASHREF> then keys mean to be index of radio scanner 
 group and values are states of group. States can be strings - ON/OFF or integer
 1:OFF/0:ON.
 
-If C<GROUP_DATA>  is ARRAYREF then every element is state of group with index
+If C<GROUP_DATA>  is C<ARRAYREF> then every element is state of group with index
 equals index of element plus 1. States can be strings - ON/OFF or integer
 1:OFF/0:ON.
 
@@ -241,7 +240,7 @@ B<Example>:
 
 =head2 setValidScanChannels(CHANNELS_ARRAYREF)
 
-Set valid radio scanner groups in Scan mode. C<CHANNELS_ARRAYREF> is ARRAYREF
+Set valid radio scanner groups in Scan mode. C<CHANNELS_ARRAYREF> is C<ARRAYREF>
 of radio scanner group indexes.
 
 B<Example>:
@@ -253,10 +252,10 @@ B<Example>:
 
 =head2 getChannelInfo(N_INT)
 
-Get saved channel information, С<N_INT> is number of channel, integer 
+Get stored channel information, C<N_INT> is number of channel, integer 
 between 1..300.
 
-Returns HASHREF with keys:
+Returns C<HASHREF> with keys:
 
 =over 3
 
@@ -270,11 +269,11 @@ B<index> - number of channel
 
 =item *
 
-B<freq> - saved freqency in human readable form, e.g. 128.0000
+B<freq> - stored frequency in human readable form, e.g. 128.0000
 
 =item *
 
-B<freq_code> - saved frequency as returned by radio scanner, e.g. '01280000'
+B<freq_code> - stored frequency as returned by radio scanner, e.g. '01280000'
 
 =item *
 
@@ -327,11 +326,11 @@ C<OPTS_HASH> has keys:
 
 =item *
 
-B<start> - number of first channel
+B<start> - index of first channel
 
 =item *
 
-B<stop> - number of last channels
+B<stop> - index of last channels
 
 =item *
 
@@ -340,22 +339,37 @@ set all channels will be selected.
 
 =back
 
-Returns ARRAYREF each element is HASHREF with information about channel
+Returns C<ARRAYREF> each element is C<HASHREF> with information about channel
 described in method C<getChannelInfo>.
+
+B<Example>:
+
+ # get information about channels 60..70 in ON state 
+ 
+ $radio->getChannelsInfo(start => 60, stop => 70, status => 'ON');
+
+ # get all channels information
+
+ $radio->getChannelsInfo();
 
 =head2 getBankChannelsInfo(N_INT)
 
-Gets information about channel in a bank. C<N_INT> is number of channels
+Gets information about channel in a bank. C<N_INT> is index of channels
 bank, 1..10.
 
-Returns ARRAYREF each element is HASHREF with information about channel
+Returns C<ARRAYREF> each element is C<HASHREF> with information about channel
 described in method C<getChannelInfo>.
+
+B<Example>:
+
+ $radio->getBankChannelsInfo(5);
 
 =head2 setChannelInfo(IDX_INT, DATA_HASHREF)
 
-Store frequency in to channel. C<IDX_INT> - integer, number of channel (1..300).
+Store frequency in to the channel. C<IDX_INT> - integer, index of channel
+(1..300).
 
-C<DATA_HASHREF> is HASHREF, information about stored frequency with keys:
+C<DATA_HASHREF> is C<HASHREF>, information about stored frequency with keys:
 
 =over 3
 
@@ -384,13 +398,13 @@ B<Example>:
 
 =head2 eraseChannel(IDX_INT)
 
-Erase information stored in channel. C<IDX_INT> = integer, number of channel.
+Erase information stored in channel. C<IDX_INT> - integer, index of channel.
 
 =head2 getSearchCloseCallSettings
 
 Get Search Close Call Settings.
 
-Returns HASHREF with keys:
+Returns C<HASHREF> with keys:
 
 =over 3
 
@@ -416,7 +430,7 @@ B<delay_code> - delay code: 1:ON/0:OFF.
 
 Set Search Close Call Settings.
 
-C<OPTS_HASHREF> is HASHREF with keys:
+C<OPTS_HASHREF> is C<HASHREF> with keys:
 
 =over 3
 
@@ -432,11 +446,16 @@ B<delay> - delay: 0, 1 or 'OFF', 'ON'
 
 =head2 getGlobalLockoutFreqs
 
-Get list of global lockout frequencies. List returned as an ARRAYREF.
+Get list of global lockout frequencies. List returned as an C<ARRAYREF>.
 
 =head2 lockGlobalFrequency(FREQ)
 
 Locks out frequency. C<FREQ> is frequency value as string of float or integer.
+
+B<Example>:
+
+ $radio->lockGlobalFrequency('27.000');
+ $radio->lockGlobalFrequency(27);
 
 =head2 unlockGlobalFrequency(FREQ)
 
@@ -446,7 +465,7 @@ Unlocks a lockout frequency. C<FREQ> is frequency value as string of float or in
 
 Get close call settings.
 
-Retuns HASHREF with keys:
+Returns C<HASHREF> with keys:
 
 =over 3
 
@@ -478,8 +497,8 @@ B<alert_light_code> - alarm with light when CC is found code: 1:ON/0:OFF
 =item *
 
 B<bands> - state of preset bands in Close Call RF mode. There are 4 bands:
-B<VHF_LOW>, B<AIR>, B<VHF_HIGH> and B<UHF>. They are keys in B<bands> HASHREF,
-possible values: ON/OFF.
+B<VHF_LOW>, B<AIR>, B<VHF_HIGH> and B<UHF>. They are keys in B<bands>
+C<HASHREF>, possible values: ON/OFF.
 
 =back
 
@@ -487,7 +506,7 @@ possible values: ON/OFF.
 
 Set close call settings.
 
-B<OPTS_HASHREF> is HASHREF with keys:
+B<OPTS_HASHREF> is C<HASHREF> with keys:
 
 =over 3
 
@@ -505,8 +524,8 @@ B<alert_light> - alert with light settings: 0, 1 or OFF, ON
 
 =item *
 
-B<bands> - list of available bands in Close Call RF mode. ARRAYREF each element
-is band name to be set in ON state.
+B<bands> - list of available bands in Close Call RF mode. C<ARRAYREF> each element
+is band name to be set to ON state.
 
 =back
 
@@ -515,14 +534,14 @@ all B<bands> are ON.
 
 =head2 getServiceSearchSettings(BAND)
 
-Returns information about Service Search settings. C<BAND_INT> is number or
-name of one of 10 Service frequences ranges. 
+Returns information about Service Search settings. C<BAND_INT> is index or
+name of one of 10 Service frequencies ranges. 
 
 Ranges: 1:WX -Weather, 2:POLICE - Police, 3:FIRE - Fire/Emergency,
 4:MARINE - Marine, 5:RACE - Racing, 6:AIR - Civil Air, 7:HAM - HAM Radio,
 8:RAIL - Railroad, 9:CB - CB Radio, 10:OTHER - FRS/GMRS/MRUS.
 
-Return value is HASHREF with keys:
+Return value is C<HASHREF> with keys:
 
 =over 3
 
@@ -560,14 +579,14 @@ C<DLY> - delay code or name - 1:ON/0:OFF. C<DIR> - direction of search
 
 =head2 getCustomSearchGroup
 
-Returns state of custom seach frequencies groups and Custom Search settings.
-Return value is HAHREF with keys:
+Returns state of Custom Search frequencies groups and Custom Search settings.
+Return value is C<HASHREF> with keys:
 
 =over 3
 
 =item *
 
-B<group> -  ARRAYREF of 10 elements. Each element contains ON/OFF string.
+B<group> -  C<ARRAYREF> of 10 elements. Each element contains ON/OFF string.
 Every array element describes group with the same index in radio.
 But index of radio scanner groups starts with 1. So element with index 0 means
 state of group with index 1.
@@ -592,13 +611,13 @@ B<direction_code> - direction of search code: 0:UP/1:DOWN.
 
 =head2 setCustomSearchGroup(GROUPS, DLY, DIR)
 
-Set state of frequences groups in Custom Search mode. 
+Set state of frequencies groups in Custom Search mode. 
 
-C<GROUPS> - HASHREF or ARRAYREF - describes states of freq group. 
-If you use ARRAYREF you should set 10 elements array every element must 
-contain string ON or OFF. In HASHREF representation keys are index of groups, 
-values are state. If group state was not set in HASH its state would be set 
-to OFF.
+C<GROUPS> - C<HASHREF> or C<ARRAYREF> - describes states of freq group. 
+If you use C<ARRAYREF> you should set 10 elements array every element must 
+contain string ON or OFF. In C<HASHREF> representation keys are index of groups, 
+values are state. If group state was not present in C<HASH> its state would
+be set to OFF.
 
 C<DLY> - delay code or name - 1:ON/0:OFF.
 
@@ -607,17 +626,18 @@ C<DIR> - direction of search
 
 =head2 getCustomSearchRange(RANGE_INT)
 
-Radio scanner has 10 Custom Search frequency ranges. This method retrive 
+Radio scanner has 10 Custom Search frequency ranges. This method retrieve 
 left and right bound of range.
 
 C<RANGE_INT> - integer, index of range.
 
-Return value are ARRAYREF of 2 elements. First is left bound, second right.
+Return value is an C<ARRAYREF> of 2 elements. First is left bound,
+second is right.
 
 =head2 getAllCustomSearchRanges
 
-Returns all ten ranges bounds as ARRAYREF every element contains 
-two elements ARRAYREF where first element is left bound and second right.
+Returns all ten ranges bounds as C<ARRAYREF> every element contains 
+two elements C<ARRAYREF> where first element is left bound and second is right.
 
 =head2 setCustomSearchRange(RANGE_INT, LEFT, RIGHT)
 
@@ -636,7 +656,7 @@ B<Example>:
 
 =head2 clearMemory
 
-Clear all radio memory.
+Clear all radio memory. Not tested :)
 
 =head1 SEE ALSO
 
