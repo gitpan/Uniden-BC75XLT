@@ -1,6 +1,6 @@
 package Uniden::BC75XLT;
 
-$VERSION = "0.0.2";
+$VERSION = "0.0.3";
 sub Version { $VERSION; }
 
 use strict;

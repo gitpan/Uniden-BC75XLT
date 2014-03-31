@@ -2,6 +2,6 @@ use ExtUtils::MakeMaker;
 
 WriteMakefile(
    NAME  => "Uniden::BC75XLT",
-   VERSION  => '0.0.2',
+   VERSION_FROM  => 'BC75XLT.pm',
    PREREQ_PM => { 'Device::SerialPort' => 0 },
 );

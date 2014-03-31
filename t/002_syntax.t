@@ -1,5 +1,4 @@
 use File::Find;
-BEGIN { require "/usr/local/stack/db/bin/perl_path"; }
 
 find({ no_chdir=>1, wanted=>sub {
    return if $File::Find::name !~ /\.pm$/;
