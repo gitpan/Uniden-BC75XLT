@@ -1,12 +1,12 @@
 {
-   "abstract" : "unknown",
+   "abstract" : "module to program Uniden BCL75XLT radio scanner over USB connection",
    "author" : [
-      "unknown"
+      "Vladimir Ershov "
    ],
    "dynamic_config" : 1,
    "generated_by" : "ExtUtils::MakeMaker version 6.86, CPAN::Meta::Converter version 2.120351",
    "license" : [
-      "unknown"
+      "open_source"
    ],
    "meta-spec" : {
       "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
@@ -37,5 +37,5 @@
       }
    },
    "release_status" : "stable",
-   "version" : "v0.0.3"
+   "version" : "v0.0.4"
 }
